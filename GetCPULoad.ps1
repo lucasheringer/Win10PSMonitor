@@ -11,7 +11,7 @@ $avg = Get-WmiObject win32_processor | Measure-Object -property LoadPercentage -
 Write-Host $avg
 
 #reading memory usage
-$mem = Get-WmiObject win32_operatingsystem | Foreach {"{0:N2}" -f ((($_.TotalVisibleMemorySize - $_.FreePhysicalMemory)*100)/ $_.TotalVisibleMemorySize)}
+$mem = Get-WmiObject win32_operatingsystem | Foreach {"{0:N0}" -f ((($_.TotalVisibleMemorySize - $_.FreePhysicalMemory)*100)/ $_.TotalVisibleMemorySize)}
 Write-Host $mem
 
 #Getting IO disk percentage
@@ -37,14 +37,14 @@ $Disk = Get-WmiObject -class Win32_PerfRawData_PerfDisk_LogicalDisk `
 #$PercentIdleTime =(1 - (($Idle2 - $Idle1) / ($T2 - $T1))) * 100
 #"`t Percent Disk Idle Time is " + "{0:n2}" -f $PercentIdleTime
 $PercentDiskTime =(1 - (($DiskTime2 - $DiskTime1) / ($T2 - $T1))) * 100
-"{0:n2}" -f $PercentDiskTime
+"{0:N0ø}" -f $PercentDiskTime
 
 #writing to file
-$Logfile = "D:\Monitor.log"
+$Logfile = "C:\Users\IBM_ADMIN\Documents\PowerShell\Win10PSMonitor\Monitor.log"
 
-$all = $avg.ToString() + ", " + $mem.ToString() + ", " + "{0:n2}" -f $PercentDiskTime
+$all = $avg.ToString() + ", " + $mem.ToString() + ", " + "{0:N0}" -f $PercentDiskTime
 Write-Host $all
-#Add-content -Path $Logfile -Value $avg $mem 
+'{"cols": [{"id":"","label":"Device","type":"string"},{"id":"","label":"Value","type":"number"}],"rows": [{"c":[{"v":"CPU","f":null},{"v": ' + $avg.ToString() + ', "f":null}]},{"c":[{"v":"Memory", "f":null},{"v": ' + $mem.ToString() + ', "f":null}]},{"c":[{"v":"Disk", "f":null},{"v": ' + "{0:N0}" -f $PercentDiskTime + ', "f":null}]}]} ' > $Logfile
 
 #Sleeping
 start-sleep -s 2
