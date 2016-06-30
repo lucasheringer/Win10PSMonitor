@@ -1,6 +1,5 @@
 <html>
   <head>
-  <link rel="stylesheet" type="text/css" href="style.css">
   <title>Windows 10 Hardware monitor</title>
   <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
   <meta content="utf-8" http-equiv="encoding">
@@ -36,6 +35,19 @@
         var chart = new google.visualization.Gauge(document.getElementById('chart_div'));
 
         chart.draw(data, chart_options);
+
+        setInterval(function() {
+          var jsonData = $.ajax({ url:'Monitor.json',
+             dataType: 'json',
+              async: false
+             }).responseText;
+          obj = 0;
+          var obj = JSON.parse(jsonData);
+          data = 0;
+          var data = new google.visualization.DataTable(obj);
+          //data.setValue(0, 1, 40 + Math.round(60 * Math.random()));
+          chart.draw(data, chart_options);
+        }, 2000);
       }
         </script>
         </head>

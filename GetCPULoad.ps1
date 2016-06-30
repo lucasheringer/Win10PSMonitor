@@ -36,15 +36,16 @@ $Disk = Get-WmiObject -class Win32_PerfRawData_PerfDisk_LogicalDisk `
 
 #$PercentIdleTime =(1 - (($Idle2 - $Idle1) / ($T2 - $T1))) * 100
 #"`t Percent Disk Idle Time is " + "{0:n2}" -f $PercentIdleTime
-$PercentDiskTime =(1 - (($DiskTime2 - $DiskTime1) / ($T2 - $T1))) * 100
+$PercentDiskTimeIdle =(1 - (($DiskTime2 - $DiskTime1) / ($T2 - $T1))) * 100
 #"{0:N0ø}" -f $PercentDiskTime
+$DiskUsage = 100 - $PercentDiskTimeIdle
 
 #writing to file
 #Out-file -filepath "C:\Apache24\htdocs\Monitor.json" -encoding ASCII
 
-$all = $avg.ToString() + ", " + $mem.ToString() + ", " + "{0:N0}" -f $PercentDiskTime
+$all = $avg.ToString() + ", " + $mem.ToString() + ", " + "{0:N0}" -f $DiskUsage
 #Write-Host $all
-'{"cols": [{"id":"","label":"Device","type":"string"},{"id":"","label":"Value","type":"number"}],"rows": [{"c":[{"v":"CPU","f":null},{"v": ' + $avg.ToString() + ', "f":null}]},{"c":[{"v":"Memory", "f":null},{"v": ' + $mem.ToString() + ', "f":null}]},{"c":[{"v":"Disk", "f":null},{"v": ' + "{0:N0}" -f $PercentDiskTime + ', "f":null}]}]} ' | Out-file -filepath "C:\Apache24\htdocs\Monitor.json" -encoding ASCII
+'{"cols": [{"id":"","label":"Device","type":"string"},{"id":"","label":"Value","type":"number"}],"rows": [{"c":[{"v":"CPU","f":null},{"v": ' + $avg.ToString() + ', "f":null}]},{"c":[{"v":"Memory", "f":null},{"v": ' + $mem.ToString() + ', "f":null}]},{"c":[{"v":"Disk", "f":null},{"v": ' + "{0:N0}" -f $DiskUsage + ', "f":null}]}]} ' | Out-file -filepath "C:\Apache24\htdocs\Monitor.json" -encoding ASCII
 
 #Sleeping
 start-sleep -s 2
