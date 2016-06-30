@@ -1,0 +1,1 @@
+{"cols": [{"id":"","label":"Device","type":"string"},{"id":"","label":"Value","type":"number"}],"rows": [{"c":[{"v":"CPU","f":null},{"v": 12, "f":null}]},{"c":[{"v":"Memory", "f":null},{"v": 66, "f":null}]},{"c":[{"v":"Disk", "f":null},{"v": 84, "f":null}]}]} 

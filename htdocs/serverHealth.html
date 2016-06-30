@@ -1,0 +1,453 @@
+<html>
+  <head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>Servers Health</title>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+    <audio id="alert_audio" src="alert.wav" preload="auto"></audio>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+	$(function(){
+        	$("#includedContent").load("topBar.html"); 
+    	});
+	google.load("visualization", "1", {packages:["gauge"]});
+      	google.setOnLoadCallback(drawChart);
+/////////////////
+//Treshould RHS
+////////////////
+
+var load_ts_rhs = 4;
+var mem_ts_rhs = 80;
+var cpu_ts_rhs = 80;
+
+/////////////////
+//Treshould YSF
+////////////////
+
+var load_ts_ysf = 4;
+var mem_ts_ysf = 80;
+var cpu_ts_ysf = 80;
+
+/////////////////
+//Treshould LFO
+////////////////
+
+var load_ts_lfo = 4;
+var mem_ts_lfo = 80;
+var cpu_ts_lfo = 80;
+
+/////////////////
+//RHS Servers Json
+////////////////
+	//Getting json data for RHS
+	function drawChart() {
+    	var jsonData = $.ajax({ url:'XML/rhs_servers_health.json',
+	dataType: 'json',
+	async: false
+	}).responseText;
+
+///////////////
+//YSF Servers Json
+///////////////
+
+    	var jsonDataYSF = $.ajax({ url:'XML/YSF_JBOSS_serversHealth.json',
+	dataType: 'json',
+	async: false
+	}).responseText;
+
+///////////////
+//LFO Servers Json
+///////////////
+
+    	var jsonDataLFO = $.ajax({ url:'XML/LFO_servers_health.json',
+	dataType: 'json',
+	async: false
+	}).responseText;
+
+	// load json
+	var obj = JSON.parse(jsonData);
+	var objYSF = JSON.parse(jsonDataYSF);
+	var objLFO = JSON.parse(jsonDataLFO);
+
+	// define arrays to store data and charts
+	var data_tables = [];
+	var google_charts = [];
+	var data_tablesYSF = [];
+	var google_chartsYSF = [];
+	var data_tablesLFO = [];
+	var google_chartsLFO = [];
+
+	// this is the div that will store all of the charts for RHS
+	var chart_area;
+	chart_area = document.getElementById('chart_div');
+
+	// this is the div that will store all of the charts for YSF
+	var chart_areaYSF;
+	chart_areaYSF = document.getElementById('chart_div_ysf');
+
+	// this is the div that will store all of the charts for LFO
+	var chart_areaLFO;
+	chart_areaLFO = document.getElementById('chart_div_lfo');
+
+	// set the chart options
+	var chart_options;
+	chart_options = {
+	width: 400,
+	height: 200,
+	redFrom: 90,
+	redTo: 100,
+	yellowFrom: 75,
+	yellowTo: 90,
+	minorTicks: 5,
+	forceIFrame: true
+	};
+
+
+	// process json array -- fyi: use 'in' keyword for object keys
+	// FOR loop for RHS graphs
+	for (var i = 0; i < obj.length; i++) {
+	//var chart_container;  // chart container for this json instance
+	//var server_container;
+	var temp_idle;
+	var temp_mem;
+	var data_table;       // data table for this json instance
+	var google_chart;     // google chart for this json instance
+	var idle;
+	var temp_server = (obj[i].server);
+	var server;
+	var load = parseFloat(obj[i].Load);
+	var temp_mem = 100-(parseFloat(obj[i].Mem));
+	var mem = temp_mem.toFixed(2);
+
+	//Checking if the server is the RMS DB server.
+	if (temp_server.length < 9) {
+		server = temp_server;
+	} else {
+		server = "DB Server";
+	}
+
+	// load data table - LOAD 
+	temp_idle = 100-(parseFloat(obj[i].Idle));
+	idle = temp_idle.toFixed(2);
+	data_table = new google.visualization.DataTable();
+	data_table.addColumn('string', 'Label');
+	data_table.addColumn('number', 'Value');
+	data_table.addRow(['Load', parseFloat(obj[i].Load)]);
+	data_table.addRow(['Memory', parseFloat(mem)]);
+	data_table.addRow(['CPU', parseFloat(idle)]);
+
+	// save it to the array
+	data_tables.push(data_table);
+
+	//checking if servers are ok and if not displaying a alert and a sound alarm
+	if ( load > load_ts_rhs || mem > mem_ts_rhs || idle > cpu_ts_rhs) {
+		document.getElementById('alert_audio').play();
+		var myWindow = window.open("", "MsgWindow", "width=400, height=200");
+		myWindow.document.write("<p>Warning!!! Please check server: " + server + "</p>");
+		//alert("Warning!!! Please check server:" + server);
+		//server_container.style.color = "red";
+		//chart_container = document.createElement('DIV' + i);
+	}
+
+	// create the container for this chart 
+	var server_container = document.createElement('div_s'+ i);
+	var chart_container = document.createElement('div_c' + i);
+	var t = document.createTextNode(server);
+	server_container.appendChild(t);
+	chart_area.appendChild(server_container);
+
+	chart_area.appendChild(chart_container);
+
+	// create -- save -- draw the chart
+	google_chart = new google.visualization.Gauge(chart_container);
+	google_charts.push(google_chart);
+	google_chart.draw(data_table, chart_options);
+
+	}/// end of loop RHS server
+
+	////////////////////////////////
+	//FOR loop for YSF server graphs
+	for (var i = 0; i < objYSF.length; i++) {
+	
+	//var chart_container;  // chart container for this json instance
+	//var server_container;
+	var temp_idle;
+	var temp_mem;
+	var data_table;       // data table for this json instance
+	var google_chart;     // google chart for this json instance
+	var idle;
+	var temp_server = (objYSF[i].server);
+	var server;
+	var load = parseInt(objYSF[i].Load);
+	var temp_mem = 100-(parseFloat(objYSF[i].Mem));
+	var mem = temp_mem.toFixed(2);
+
+	//Checking if the server is the RMS DB server.
+	if (temp_server.length < 9) {
+		server = temp_server;
+	} else {
+		server = "DB Server";
+	}
+
+	// load data table - LOAD 
+	temp_idle = 100-(parseFloat(objYSF[i].Idle));
+	idle = temp_idle.toFixed(2);
+	data_table = new google.visualization.DataTable();
+	data_table.addColumn('string', 'Label');
+	data_table.addColumn('number', 'Value');
+	data_table.addRow(['Load', parseFloat(objYSF[i].Load)]);
+	data_table.addRow(['Memory', parseFloat(mem)]);
+	data_table.addRow(['CPU', parseFloat(idle)]);
+
+	// save it to the array
+	data_tablesYSF.push(data_table);
+
+	//checking if servers are ok and if not displaying a alert and a sound alarm
+	if ( load > load_ts_ysf || mem > mem_ts_ysf || idle > cpu_ts_ysf)  {
+		document.getElementById('alert_audio').play();
+		var myWindow = window.open("", "MsgWindow", "width=400, height=200");
+		myWindow.document.write("<p>Warning!!! Please check server: " + server + "</p>");
+		//alert("Warning!!! Please check server:" + server);
+		//server_container.style.color = "red";
+		//chart_container = document.createElement('DIV' + i);
+	}
+
+	// create the container for this chart 
+	var server_container = document.createElement('div_s'+ i);
+	var chart_container = document.createElement('div_c' + i);
+	var t = document.createTextNode(server);
+	server_container.appendChild(t);
+	chart_areaYSF.appendChild(server_container);
+
+	chart_areaYSF.appendChild(chart_container);
+
+	// create -- save -- draw the chart
+	google_chart = new google.visualization.Gauge(chart_container);
+	google_chartsYSF.push(google_chart);
+	google_chart.draw(data_table, chart_options);
+
+	} /// end of loop YSF server
+
+	////////////////////////////////
+	//FOR loop for LFO server graphs
+	for (var i = 0; i < objLFO.length; i++) {
+	
+	//var chart_container;  // chart container for this json instance
+	//var server_container;
+	var temp_idle;
+	var temp_mem;
+	var data_table;       // data table for this json instance
+	var google_chart;     // google chart for this json instance
+	var idle;
+	var temp_server = (objLFO[i].server);
+	var server;
+	var load = parseInt(objLFO[i].Load);
+	var temp_mem = 100-(parseFloat(objLFO[i].Mem));
+	var mem = temp_mem.toFixed(2);
+
+	//Checking if the server is the RMS DB server.
+	if (temp_server.length < 9) {
+		server = temp_server;
+	} else {
+		server = "DB Server";
+	}
+
+	// load data table - LOAD 
+	temp_idle = 100-(parseFloat(objLFO[i].Idle));
+	idle = temp_idle.toFixed(2);
+	data_table = new google.visualization.DataTable();
+	data_table.addColumn('string', 'Label');
+	data_table.addColumn('number', 'Value');
+	data_table.addRow(['Load', parseFloat(objLFO[i].Load)]);
+	data_table.addRow(['Memory', parseFloat(mem)]);
+	data_table.addRow(['CPU', parseFloat(idle)]);
+
+	// save it to the array
+	data_tablesLFO.push(data_table);
+
+	//checking if servers are ok and if not displaying a alert and a sound alarm
+	if ( load > load_ts_lfo || mem > mem_ts_lfo || idle > cpu_ts_lfo)  {
+		document.getElementById('alert_audio').play();
+		var myWindow = window.open("", "MsgWindow", "width=400, height=200");
+		myWindow.document.write("<p>Warning!!! Please check server: " + server + "</p>");
+		//alert("Warning!!! Please check server:" + server);
+		//server_container.style.color = "red";
+		//chart_container = document.createElement('DIV' + i);
+	}
+
+	// create the container for this chart 
+	var server_container = document.createElement('div_s'+ i);
+	var chart_container = document.createElement('div_c' + i);
+	var t = document.createTextNode(server);
+	server_container.appendChild(t);
+	chart_areaLFO.appendChild(server_container);
+
+	chart_areaLFO.appendChild(chart_container);
+
+	// create -- save -- draw the chart
+	google_chart = new google.visualization.Gauge(chart_container);
+	google_chartsLFO.push(google_chart);
+	google_chart.draw(data_table, chart_options);
+
+	} /// end of loop LFO server
+
+	// access the charts / data later using arrays --> data_tables and google_charts
+	// using setInterval to update all gauge charts every 2 mins
+	// reloading json for RHS
+	setInterval(function() {
+	jsonData = 0;
+    	jsonData = $.ajax({ url:'XML/rhs_servers_health.json',
+	dataType: 'json',
+	async: false
+	}).responseText;
+
+	// reloading json for YSF
+	jsonDataYSF = 0;
+    	jsonDataYSF = $.ajax({ url:'XML/YSF_JBOSS_serversHealth.json',
+	dataType: 'json',
+	async: false
+	}).responseText;
+
+	// reloading json for LFO
+	jsonDataLFO = 0;
+    	jsonDataLFO = $.ajax({ url:'XML/LFO_servers_health.json',
+	dataType: 'json',
+	async: false
+	}).responseText
+
+	// Parse json RHS
+	obj = 0;
+	obj = JSON.parse(jsonData);
+
+	// Parse json YSF
+	objYSF = 0;
+	objYSF = JSON.parse(jsonDataYSF);
+
+	// Parse json LFO
+	objLFO = 0;
+	objLFO = JSON.parse(jsonDataLFO);
+
+	//FOR Loop to reload the gauges for RHS server
+	for (var i = 0; i < obj.length; i++) {
+		var server = (obj[i].server)
+		var temp_idle;
+		var idle;
+		var load = parseInt(obj[i].Load);
+		var temp_mem = 100-(parseFloat(obj[i].Mem));
+		var mem = temp_mem.toFixed(2);
+		temp_idle = 100-(parseFloat(obj[i].Idle));
+		idle = temp_idle.toFixed(2);
+		data_tables[i].setValue(0,1,parseFloat(obj[i].Load));
+		data_tables[i].setValue(1,1,parseFloat(mem));
+		data_tables[i].setValue(2,1,parseFloat(idle));
+		google_charts[i].draw(data_tables[i],chart_options);
+		//console.log(obj[i].Load, obj[i].Mem, idle);
+		//console.log(data_tables[i])
+		if ( load > load_ts_rhs || mem > mem_ts_rhs || idle > cpu_ts_rhs)  {
+			document.getElementById('alert_audio').play();
+			var myWindow = window.open("", "MsgWindow", "width=400, height=200");
+			myWindow.document.write("<p>Warning!!! Please check server: " + server + "</p>");
+    			//alert("Warning!!! Please check server:" + server);
+			}
+		}
+
+	//FOR Loop to reload the gauges for YSF server
+	for (var i = 0; i < objYSF.length; i++) {
+		var server = (objYSF[i].server)
+		var temp_idle;
+		var idle;
+		var load = parseInt(objYSF[i].Load);
+		var temp_mem = 100-(parseFloat(objYSF[i].Mem));
+		var mem = temp_mem.toFixed(2);
+		temp_idle = 100-(parseFloat(objYSF[i].Idle));
+		idle = temp_idle.toFixed(2);
+		data_tablesYSF[i].setValue(0,1,parseFloat(objYSF[i].Load));
+		data_tablesYSF[i].setValue(1,1,parseFloat(mem));
+		data_tablesYSF[i].setValue(2,1,parseFloat(idle));
+		google_chartsYSF[i].draw(data_tablesYSF[i],chart_options);
+		//console.log(obj[i].Load, obj[i].Mem, idle);
+		//console.log(data_tables[i])
+		if ( load > load_ts_ysf || mem > mem_ts_ysf || idle > cpu_ts_ysf) {
+			document.getElementById('alert_audio').play();
+			var myWindow = window.open("", "MsgWindow", "width=400, height=200");
+			myWindow.document.write("<p>Warning!!! Please check server: " + server + "</p>");
+    			//alert("Warning!!! Please check server:" + server);
+			}
+		}
+
+
+	//FOR Loop to reload the gauges for LFO server
+	for (var i = 0; i < objLFO.length; i++) {
+		var server = (objLFO[i].server)
+		var temp_idle;
+		var idle;
+		var load = parseInt(objLFO[i].Load);
+		var temp_mem = 100-(parseFloat(objLFO[i].Mem));
+		var mem = temp_mem.toFixed(2);
+		temp_idle = 100-(parseFloat(objLFO[i].Idle));
+		idle = temp_idle.toFixed(2);
+		data_tablesLFO[i].setValue(0,1,parseFloat(objLFO[i].Load));
+		data_tablesLFO[i].setValue(1,1,parseFloat(mem));
+		data_tablesLFO[i].setValue(2,1,parseFloat(idle));
+		google_chartsLFO[i].draw(data_tablesLFO[i],chart_options);
+		//console.log(obj[i].Load, obj[i].Mem, idle);
+		//console.log(data_tables[i])
+		if ( load > load_ts_lfo || mem > mem_ts_lfo || idle > cpu_ts_lfo) {
+			document.getElementById('alert_audio').play();
+			var myWindow = window.open("", "MsgWindow", "width=400, height=200");
+			myWindow.document.write("<p>Warning!!! Please check server: " + server + "</p>");
+    			//alert("Warning!!! Please check server:" + server);
+			}
+		}
+
+		}, 120000);
+
+
+//////////////
+//buttons to hide and show graphs
+//////////////
+	$(document).ready(function(){
+		$("#hideRHS").click(function(){
+			$("#chart_div").hide();
+		});
+		$("#showRHS").click(function(){
+			$("#chart_div").show();
+		});
+	});
+
+	$(document).ready(function(){
+		$("#hideYSF").click(function(){
+			$("#chart_div_ysf").hide();
+		});
+		$("#showYSF").click(function(){
+			$("#chart_div_ysf").show();
+		});
+	});
+	$(document).ready(function(){
+		$("#hideLFO").click(function(){
+			$("#chart_div_lfo").hide();
+		});
+		$("#showLFO").click(function(){
+			$("#chart_div_lfo").show();
+		});
+	});
+	}
+	</script>
+	</head>
+	<body bgcolor="#f1f8e9">
+	<div id="includedContent"></div>
+	<table><tr>
+	<td><button id="hideRHS">Hide RHS servers gauges</button>
+	<button id="showRHS">Show RHS servers gauges</button></td>
+	<td><button id="hideYSF">Hide YSF servers gauges</button>
+	<button id="showYSF">Show YSF servers gauges</button></td>
+	<td><button id="hideLFO">Hide LFO servers gauges</button>
+	<button id="showLFO">Show LFO servers gauges</button></td></tr>
+	<tr valign="top">
+	<td><div id="chart_div" style="align:left; width:500px;"></div></td>
+	<td><div id="chart_div_ysf" style="align:center; width:500px;"></div></td>
+	<td><div id="chart_div_lfo" style="align:right; width:500px;"></div></td></tr>
+	</table>
+</body>
+</html>

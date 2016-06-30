@@ -1,0 +1,45 @@
+<html>
+  <head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>Windows 10 Hardware monitor</title>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+	  google.load("visualization", "1", {packages:["gauge"]});
+      	google.setOnLoadCallback(drawChart);
+
+        //Getting json data
+      	function drawChart() {
+        var jsonData = $.ajax({ url:'Monitor.json',
+      	   dataType: 'json',
+      	    async: false
+      	   }).responseText;
+
+        // load json
+        var obj = JSON.parse(jsonData);
+
+        var data = new google.visualization.DataTable(obj);
+        // set the chart options
+      	var chart_options;
+      	chart_options = {
+      	width: 400,
+      	height: 200,
+      	redFrom: 90,
+      	redTo: 100,
+      	yellowFrom: 75,
+      	yellowTo: 90,
+      	minorTicks: 5,
+      	forceIFrame: true
+      	};
+        var chart = new google.visualization.Gauge(document.getElementById('chart_div'));
+
+        chart.draw(data, chart_options);
+      }
+        </script>
+        </head>
+        <body>
+            <div id="chart_div" style="width: 400px; height: 120px;"></div>
+      </body>
+</html>
