@@ -17,6 +17,7 @@ else
     echo "No process to kill"
 fi
 
+echo "starting pyMetersWin10"
 python pyMetersWin10.py &
 
 exit 0
