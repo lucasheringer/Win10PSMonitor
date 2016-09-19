@@ -12,8 +12,8 @@ done
 
 echo "starting pyMetersWin10"
 
-sleep 2
+sleep 1
 
-python /home/pi/pyMetersWin10.py &
+python /home/pi/pyMetersWin10.py >/dev/null
 
 echo "is it working?"
