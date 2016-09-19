@@ -4,14 +4,14 @@
 #Script to control pymeters process stopping and starting correctly
 
 PID=`ps -ef | grep pyMeters | awk '{print $2}'`
-COUNT=`wc -l $PID`
+COUNT=`cat $PID | wc -l`
 
 if $COUNT > 1
   then
     for i in PID;
       do
         echo "killing process: " $i
-        kill -9 $i
+        sudo kill -9 $i
       done
 else
     echo "No process to kill"
