@@ -18,6 +18,8 @@ else
 fi
 
 echo "starting pyMetersWin10"
-python pyMetersWin10.py &
+pyPID=`sudo python pyMetersWin10.py &`
+
+echo $pyPID
 
 exit 0
