@@ -6,7 +6,7 @@
 PID=`ps -ef | grep pyMeters | awk '{print $2}'`
 COUNT=`ps -ef | grep pyMeters | awk '{print $2}'|wc -l`
 
-if ( $COUNT > 1 )
+if [ $COUNT -gt 1 ]
   then
     for i in PID;
       do
