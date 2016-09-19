@@ -10,7 +10,6 @@ import subprocess
 FPS = 5
 #url = "http://10.42.0.1/results.json"
 newUrl = "http://192.168.1.209:8085/data.json"
-#testing webhook
 
 # Define basic colors
 SHADOW = (192, 192, 192)
