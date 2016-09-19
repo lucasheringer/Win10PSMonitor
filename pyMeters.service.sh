@@ -8,7 +8,7 @@ COUNT=`ps -ef | grep pyMeters | awk '{print $2}'|wc -l`
 
 if [ $COUNT -gt 1 ]
   then
-    for i in PID;
+    for i in $PID;
       do
         echo "killing process: " $i
         kill -9 $i
