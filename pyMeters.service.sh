@@ -1,6 +1,4 @@
 #!/bin/bash
-
-######
 #Script to control pymeters process stopping and starting correctly
 
 PID=`ps -ef | grep python | awk '{print $2}'|head -n -1`
