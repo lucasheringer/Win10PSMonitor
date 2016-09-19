@@ -3,7 +3,7 @@
 ######
 #Script to control pymeters process stopping and starting correctly
 
-PID=`ps -ef | grep pyMeters | awk '{print $2}'`
+PID=`ps -ef | grep pyMeters | awk '{print $2}'|head -n -1`
 COUNT=`ps -ef | grep pyMeters | awk '{print $2}'|wc -l`
 
 if [ $COUNT -gt 1 ]
@@ -13,8 +13,6 @@ if [ $COUNT -gt 1 ]
         echo "killing process: " $i
         kill -9 $i
       done
-else
-    echo "No process to kill"
 fi
 
 echo "starting pyMetersWin10"
