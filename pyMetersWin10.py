@@ -206,7 +206,7 @@ while True:
                             x, y = pos
                             if x >= 100 and x <= 140 and y >= 100 and y <= 125:
                                 pygame.quit()
-                                subprocess.call("sudo shutdown -h now", shell=True)
+                                #subprocess.call("sudo shutdown -h now", shell=True)
                                 #pygame.quit()
                                 quit()
                                 #print("Shutting down :( ")
