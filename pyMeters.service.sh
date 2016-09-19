@@ -4,7 +4,7 @@
 #Script to control pymeters process stopping and starting correctly
 
 PID=`ps -ef | grep pyMeters | awk '{print $2}'`
-COUNT=`echo $PID | wc -l`
+COUNT=`ps -ef | grep pyMeters | awk '{print $2}'|wc -l`
 
 if ( $COUNT > 1 )
   then
