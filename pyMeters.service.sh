@@ -8,7 +8,7 @@ start)
    echo $!>/var/run/pyMeters.pid
    ;;
 stop)
-   kill -9 `cat /var/run/pyMeters.pid`
+   kill -2 `cat /var/run/pyMeters.pid`
    rm /var/run/pyMeters.pid
    ;;
 restart)
