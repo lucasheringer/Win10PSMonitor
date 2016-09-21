@@ -8,7 +8,6 @@ import time
 import subprocess
 
 FPS = 2
-#url = "http://192.168.1.209/Monitor.json"
 url = "http://10.42.0.1/results.json"
 
 # Define basic colors
