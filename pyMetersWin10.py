@@ -8,7 +8,7 @@ import time
 import subprocess
 
 FPS = 5
-newUrl = "http://192.168.1.209:8085/data.json"
+newUrl = "http://192.168.1.90:8085/data.json"
 
 # Define basic colors
 SHADOW = (192, 192, 192)
