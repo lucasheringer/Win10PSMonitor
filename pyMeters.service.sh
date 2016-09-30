@@ -1,6 +1,5 @@
 #!/bin/bash
 #Script to control pymeters process stopping and starting correctly
-# script to control python program
 
 case "$1" in
 start)
