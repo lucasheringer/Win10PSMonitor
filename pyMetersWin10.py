@@ -46,6 +46,16 @@ def getJson():
             T_GPU1 = (data['Children'][0]['Children'][4]['Children'][2]['Children'][0]['Value']) #GPU1 Load
             T_GPU1MEM = (data['Children'][0]['Children'][4]['Children'][2]['Children'][3]['Value']) #GPU1 Memory
 
+            T_CPUTEMP = T_CPUTEMP.replace(",", ".")
+            T_CPU = T_CPU.replace(",", ".")
+            T_MEM = T_MEM.replace(",", ".")
+            T_GPU0TEMP = T_GPU0TEMP.replace(",", ".")
+            T_GPU0 = T_GPU0.replace(",", ".")
+            T_GPU0MEM = T_GPU0MEM.replace(",", ".")
+            T_GPU1TEMP = T_GPU1TEMP.replace(",", ".")
+            T_GPU1 = T_GPU1.replace(",", ".")
+            T_GPU1MEM = T_GPU1MEM.replace(",", ".")
+
             CPU = float(T_CPU.split(' ',1)[0])
             MEM = float(T_MEM.split(' ',1)[0])
             GPU0 = float(T_GPU0.split(' ',1)[0])
@@ -55,6 +65,7 @@ def getJson():
             CPUTEMP = float(T_CPUTEMP.split(' ',1)[0])
             GPU0TEMP = float(T_GPU0TEMP.split(' ',1)[0])
             GPU1TEMP = float(T_GPU1TEMP.split(' ',1)[0])
+
 
             return CPU, MEM, GPU0, GPU0MEM, GPU1, GPU1MEM, CPUTEMP, GPU0TEMP, GPU1TEMP
         except ValueError:
